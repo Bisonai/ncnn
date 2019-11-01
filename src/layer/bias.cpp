@@ -40,7 +40,7 @@ int Bias::load_model(const ModelBin& mb)
     return 0;
 }
 
-int Bias::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int Bias::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     int w = bottom_top_blob.w;
     int h = bottom_top_blob.h;

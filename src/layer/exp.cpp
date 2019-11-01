@@ -34,7 +34,7 @@ int Exp::load_param(const ParamDict& pd)
     return 0;
 }
 
-int Exp::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int Exp::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     int w = bottom_top_blob.w;
     int h = bottom_top_blob.h;

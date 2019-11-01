@@ -438,7 +438,7 @@ struct binary_op_rdiv : std::binary_function<T,T,T> {
     T operator() (const T& x, const T& y) const { return y / x; }
 };
 
-int BinaryOp::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const
+int BinaryOp::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt)
 {
     const Mat& bottom_blob = bottom_blobs[0];
     const Mat& bottom_blob1 = bottom_blobs[1];
@@ -475,7 +475,7 @@ int BinaryOp::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& to
     return 0;
 }
 
-int BinaryOp::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int BinaryOp::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     if (op_type == Operation_ADD)
         return binary_op_scalar_inplace< std::plus<float> >(bottom_top_blob, b, opt);

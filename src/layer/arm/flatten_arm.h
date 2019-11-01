@@ -24,10 +24,9 @@ class Flatten_arm : virtual public Flatten
 public:
     Flatten_arm();
 
-    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const;
+    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt);
 };
 
 } // namespace ncnn
 
 #endif // LAYER_FLATTEN_ARM_H
-

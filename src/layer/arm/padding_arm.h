@@ -24,7 +24,7 @@ class Padding_arm : virtual public Padding
 public:
     Padding_arm();
 
-    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const;
+    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt);
 };
 
 } // namespace ncnn

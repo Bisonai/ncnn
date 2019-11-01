@@ -33,7 +33,7 @@ public:
 
     virtual int create_requantize_op(void);
 
-    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const;
+    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt);
 
 public:
     // param
@@ -76,10 +76,17 @@ public:
 
     // merge de/requantize op into convolution op
     std::vector<float> dequantize_scales;
-    std::vector<float> requantize_scales;    
+    std::vector<float> requantize_scales;
 
-    // implementation type, 0 means do not use auto pack model 
+    // implementation type, 0 means do not use auto pack model
     int impl_type;
+
+    #if BISONAI_KILL_THE_BITS
+    std::vector<std::vector<int>> assignments;
+    int original_input_channels;
+    int reduced_input_channels;
+    int input_feature_size;
+    #endif
 };
 
 } // namespace ncnn

@@ -29,7 +29,7 @@ Flatten_arm::Flatten_arm()
 #endif // __ARM_NEON
 }
 
-int Flatten_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Flatten_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     int dims = bottom_blob.dims;
 

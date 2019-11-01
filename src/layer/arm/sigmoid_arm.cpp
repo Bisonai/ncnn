@@ -32,7 +32,7 @@ Sigmoid_arm::Sigmoid_arm()
 #endif // __ARM_NEON
 }
 
-int Sigmoid_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int Sigmoid_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     int w = bottom_top_blob.w;
     int h = bottom_top_blob.h;

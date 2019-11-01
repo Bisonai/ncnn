@@ -25,7 +25,7 @@ Noop::Noop()
     support_packing = true;
 }
 
-int Noop::forward_inplace(std::vector<Mat>& /*bottom_top_blobs*/, const Option& /*opt*/) const
+int Noop::forward_inplace(std::vector<Mat>& /*bottom_top_blobs*/, const Option& /*opt*/)
 {
     return 0;
 }

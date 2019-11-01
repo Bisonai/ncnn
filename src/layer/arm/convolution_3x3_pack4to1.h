@@ -272,6 +272,13 @@ static void conv3x3s1_winograd64_transform_kernel_pack4to1_neon(const Mat& kerne
 
 static void conv3x3s1_winograd64_pack4to1_neon(const Mat& bottom_blob, Mat& top_blob, const Mat& kernel_tm, const Mat& _bias, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("conv3x3s1_winograd64_pack4to1_neon\n");
+    printf("w: %d\n", kernel_tm.w);
+    printf("h: %d\n", kernel_tm.h);
+    printf("c: %d\n", kernel_tm.c);
+    #endif
+
     int w = bottom_blob.w;
     int h = bottom_blob.h;
     int inch = bottom_blob.c;
@@ -2315,6 +2322,9 @@ static void conv3x3s1_winograd64_pack4to1_neon(const Mat& bottom_blob, Mat& top_
 
 static void conv3x3s1_pack4to1_neon(const Mat& bottom_blob, Mat& top_blob, const Mat& kernel, const Mat& _bias, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("conv3x3s1_pack4to1_neon\n");
+    #endif
     int inch = bottom_blob.c;
     int outw = top_blob.w;
     int outh = top_blob.h;

@@ -36,6 +36,7 @@ float ParamDict::get(int id, float def) const
 
 Mat ParamDict::get(int id, const Mat& def) const
 {
+    id = -id - 23300; // BISONAI
     return params[id].loaded ? params[id].v : def;
 }
 
@@ -84,6 +85,9 @@ static bool vstr_is_float(const char vstr[16])
 
 int ParamDict::load_param(const DataReader& dr)
 {
+    #if BISONAI_DEBUG
+    printf("ParamDict::load_param\n");
+    #endif
     clear();
 
 //     0=100 1=1.250000 -23303=5,0.1,0.2,0.4,0.8,1.0

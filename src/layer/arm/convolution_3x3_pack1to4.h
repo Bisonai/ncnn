@@ -14,6 +14,9 @@
 
 static void conv3x3s1_pack1to4_neon(const Mat& bottom_blob, Mat& top_blob, const Mat& kernel, const Mat& _bias, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("conv3x3s1_pack1to4_neon\n");
+    #endif
     int inch = bottom_blob.c;
     int outw = top_blob.w;
     int outh = top_blob.h;
@@ -904,6 +907,9 @@ static void conv3x3s1_pack1to4_neon(const Mat& bottom_blob, Mat& top_blob, const
 
 static void conv3x3s2_pack1to4_neon(const Mat& bottom_blob, Mat& top_blob, const Mat& kernel, const Mat& _bias, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("conv3x3s2_pack1to4_neon\n");
+    #endif
     int w = bottom_blob.w;
     int inch = bottom_blob.c;
     int outw = top_blob.w;

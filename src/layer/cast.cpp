@@ -164,7 +164,7 @@ static signed char float32_to_int8(float value)
     return tmp;
 }
 
-int Cast::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Cast::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     if (type_from == type_to)
     {

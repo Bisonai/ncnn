@@ -1,7 +1,48 @@
+This repository is accompanying a blog post [Kill the bits and gain the speed?](https://bisonai.com/2019/11/28/kill-the-bits/).
+
+In the root directory, you can find two compilation scripts `build_kill_the_bits_aarch64.sh` and `build_kill_the_bits_armv7.sh` for `arm64` and `armv7`, respectively.
+Experimental layer definitions are defined in `experiments/conv3x3` directory.
+
+## Experiments
+1. Make a directory at `/data/local/tmp/kill-the-bits` on your mobile device.
+
+```bash
+adb shell
+cd /data/local/tmp
+mkdir kill-the-bits
+```
+
+2. Compile inference engine.
+
+```bash
+./build_kill_the_bits_aarch64.sh
+# ./build_kill_the_bits_armv7.sh
+```
+3. Copy `benchncnn` to your device.
+
+```bash
+adb push build-android-aarch64/benchmark/benchncnn /data/local/tmp/kill-the-bits
+#adb push build-android-armv7/benchmark/benchncnn /data/local/tmp/kill-the-bits
+```
+
+4. Copy a directory `experiments/conv3x3` to `/data/local/tmp`
+
+```bash
+adb push experiments/conv3x3 /data/local/tmp/kill-the-bits
+```
+
+5. Launch experiments.
+
+```
+./benchncnn 7
+# ./benchncnn 14
+# ./benchncnn 28
+```
+
 ![](https://raw.githubusercontent.com/Tencent/ncnn/master/images/256-ncnn.png)
 # ncnn
 
-[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](https://raw.githubusercontent.com/Tencent/ncnn/master/LICENSE.txt) 
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](https://raw.githubusercontent.com/Tencent/ncnn/master/LICENSE.txt)
 [![Build Status](https://travis-ci.org/Tencent/ncnn.svg?branch=master)](https://travis-ci.org/Tencent/ncnn)
 [![Coverage Status](https://coveralls.io/repos/github/Tencent/ncnn/badge.svg?branch=master)](https://coveralls.io/github/Tencent/ncnn?branch=master)
 
@@ -155,4 +196,3 @@ ncnn 是一个为手机端极致优化的高性能神经网络前向计算框架
 ### License
 
 BSD 3 Clause
-

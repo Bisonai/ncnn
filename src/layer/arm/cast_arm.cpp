@@ -31,7 +31,7 @@ Cast_arm::Cast_arm()
 #endif // __ARM_NEON && (__ARM_FP & 2)
 }
 
-int Cast_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Cast_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     if (type_from == type_to)
     {

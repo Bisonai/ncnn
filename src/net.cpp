@@ -404,6 +404,9 @@ int Net::load_param_bin(const DataReader& dr)
 
 int Net::load_model(const DataReader& dr)
 {
+    #if BISONAI_DEBUG
+    printf("Net::load_model\n");
+    #endif
     if (layers.empty())
     {
         fprintf(stderr, "network graph not ready\n");
@@ -474,6 +477,9 @@ int Net::load_param_mem(const char* _mem)
 
 int Net::load_param(const char* protopath)
 {
+    #if BISONAI_DEBUG
+    printf("Net::load_param(const char* protopath)\n");
+    #endif
     FILE* fp = fopen(protopath, "rb");
     if (!fp)
     {
@@ -611,7 +617,7 @@ int Net::load_model(AAssetManager* mgr, const char* assetpath)
 int Net::fuse_network()
 {
     // set the int8 op fusion:requantize
-#if NCNN_STRING && NCNN_REQUANT    
+#if NCNN_STRING && NCNN_REQUANT
     // fprintf(stderr, "Test op fusion to int8 implement:\n");
     // parse the network whether is a quantization model
     bool net_quantized = false;
@@ -623,7 +629,7 @@ int Net::fuse_network()
             if (layer->type == "Convolution" && (((Convolution*)layer)->use_int8_inference == false))
                 continue;
             if (layer->type == "ConvolutionDepthWise" && (((ConvolutionDepthWise*)layer)->use_int8_inference == false))
-                continue;    
+                continue;
             net_quantized = true;
         }
     }
@@ -652,7 +658,7 @@ int Net::fuse_network()
                     if (layer_next->type == "Convolution" && ((Convolution*)layer_next)->use_int8_inference == false)
                         continue;
                     if (layer_next->type == "ConvolutionDepthWise" && ((ConvolutionDepthWise*)layer_next)->use_int8_inference == false)
-                        continue;    
+                        continue;
 
                     // fprintf(stderr, "%s, %s\n", layer->name.c_str(), layer_next->name.c_str());
                     if (layer->type == "Convolution" && layer_next->type == "Convolution")
@@ -679,7 +685,7 @@ int Net::fuse_network()
                         ((ConvolutionDepthWise*)layer)->top_blob_int8_scale = ((ConvolutionDepthWise*)layer_next)->bottom_blob_int8_scales[0];
                         ((ConvolutionDepthWise*)layer)->create_requantize_op();
                     }
-                }                  
+                }
                 else if (layer_next->type == "ReLU")
                 {
                     int layer_next_2_index = blobs[layer_next->tops[0]].consumers[0];
@@ -690,7 +696,7 @@ int Net::fuse_network()
                         if (layer_next_2->type == "Convolution" && ((Convolution*)layer_next_2)->use_int8_inference == false)
                             continue;
                         if (layer_next_2->type == "ConvolutionDepthWise" && ((ConvolutionDepthWise*)layer_next_2)->use_int8_inference == false)
-                            continue;    
+                            continue;
 
                         fprintf(stderr, "%s, %s, %s\n", layer->name.c_str(), layer_next->name.c_str(), layer_next_2->name.c_str());
                         if (layer->type == "Convolution" && layer_next_2->type == "Convolution")
@@ -742,12 +748,12 @@ int Net::fuse_network()
                                 // fprintf(stderr, "%s, ", layer_next_3->name.c_str());
                                 if (layer_next_3->type == "Convolution")
                                 {
-                                    ((Convolution*)layer)->top_blob_int8_scale = ((Convolution*)layer_next_3)->bottom_blob_int8_scale; 
-                                }    
+                                    ((Convolution*)layer)->top_blob_int8_scale = ((Convolution*)layer_next_3)->bottom_blob_int8_scale;
+                                }
                             }
 
                             ((Convolution*)layer)->use_int8_requantize = true;
-                            ((Convolution*)layer)->create_requantize_op();    
+                            ((Convolution*)layer)->create_requantize_op();
                             // fprintf(stderr, "\n");
                         }
                     }
@@ -763,7 +769,7 @@ int Net::fuse_network()
                 else
                 {
                     // fprintf(stderr, "%s\n", layer->name.c_str());
-                }                  
+                }
             }
         }
     }
@@ -805,7 +811,7 @@ void Net::clear()
 #endif // NCNN_VULKAN
 }
 
-Extractor Net::create_extractor() const
+Extractor Net::create_extractor()
 {
     return Extractor(this, blobs.size());
 }
@@ -1003,11 +1009,13 @@ Layer* Net::create_custom_layer(int index)
     return layer_creator();
 }
 
-int Net::forward_layer(int layer_index, std::vector<Mat>& blob_mats, Option& opt) const
+int Net::forward_layer(int layer_index, std::vector<Mat>& blob_mats, Option& opt)
 {
-    const Layer* layer = layers[layer_index];
+    Layer* layer = layers[layer_index];
 
-//     fprintf(stderr, "forward_layer %d %s\n", layer_index, layer->name.c_str());
+    #if BISONAI_DEBUG
+    fprintf(stderr, "Net::forward_layer %d %s\n", layer_index, layer->name.c_str());
+    #endif
 
     if (layer->one_blob_only)
     {
@@ -1174,9 +1182,9 @@ int Net::forward_layer(int layer_index, std::vector<Mat>& blob_mats, Option& opt
 }
 
 #if NCNN_VULKAN
-int Net::forward_layer(int layer_index, std::vector<Mat>& blob_mats, std::vector<VkMat>& blob_mats_gpu, VkCompute& cmd, Option& opt) const
+int Net::forward_layer(int layer_index, std::vector<Mat>& blob_mats, std::vector<VkMat>& blob_mats_gpu, VkCompute& cmd, Option& opt)
 {
-    const Layer* layer = layers[layer_index];
+    Layer* layer = layers[layer_index];
 
 //     fprintf(stderr, "forward_layer %d %d %s\n", layer->support_vulkan, layer_index, layer->name.c_str());
 
@@ -1779,7 +1787,7 @@ int Net::forward_layer(int layer_index, std::vector<Mat>& blob_mats, std::vector
 }
 #endif // NCNN_VULKAN
 
-Extractor::Extractor(const Net* _net, int blob_count) : net(_net)
+Extractor::Extractor(Net* _net, int blob_count) : net(_net)
 {
     blob_mats.resize(blob_count);
     opt = net->opt;
@@ -1844,6 +1852,10 @@ void Extractor::set_staging_vkallocator(VkAllocator* allocator)
 #if NCNN_STRING
 int Extractor::input(const char* blob_name, const Mat& in)
 {
+    #if BISONAI_DEBUG
+    printf("Extractor::input %s\n", blob_name);
+    #endif
+
     int blob_index = net->find_blob_index_by_name(blob_name);
     if (blob_index == -1)
         return -1;
@@ -1853,6 +1865,10 @@ int Extractor::input(const char* blob_name, const Mat& in)
 
 int Extractor::extract(const char* blob_name, Mat& feat)
 {
+    #if BISONAI_DEBUG
+    printf("Extractor::extract %s\n", blob_name);
+    #endif
+
     int blob_index = net->find_blob_index_by_name(blob_name);
     if (blob_index == -1)
         return -1;

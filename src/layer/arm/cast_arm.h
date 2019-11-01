@@ -24,7 +24,7 @@ class Cast_arm : virtual public Cast
 public:
     Cast_arm();
 
-    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const;
+    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt);
 };
 
 } // namespace ncnn

@@ -67,7 +67,7 @@ int Layer::destroy_pipeline(const Option& /*opt*/)
     return 0;
 }
 
-int Layer::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const
+int Layer::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt)
 {
     if (!support_inplace)
         return -1;
@@ -83,7 +83,7 @@ int Layer::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_b
     return forward_inplace(top_blobs, opt);
 }
 
-int Layer::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Layer::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     if (!support_inplace)
         return -1;
@@ -95,14 +95,63 @@ int Layer::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) con
     return forward_inplace(top_blob, opt);
 }
 
-int Layer::forward_inplace(std::vector<Mat>& /*bottom_top_blobs*/, const Option& /*opt*/) const
+int Layer::forward_inplace(std::vector<Mat>& /*bottom_top_blobs*/, const Option& /*opt*/)
 {
     return -1;
 }
 
-int Layer::forward_inplace(Mat& /*bottom_top_blob*/, const Option& /*opt*/) const
+int Layer::forward_inplace(Mat& /*bottom_top_blob*/, const Option& /*opt*/)
 {
     return -1;
+}
+
+int Layer::sum_channels_vec_indices_arm(const Mat& bottom_blob, Mat& top_blob, const std::vector<std::vector<int>>& indexes, const Option& opt)
+{
+    #if BISONAI_DEBUG
+    printf("Layer::sum_channels_vec_indices_arm\n");
+    #endif
+    const auto w = bottom_blob.w;
+    const auto h = bottom_blob.h;
+    const auto size = w*h;
+
+    const int top_blob_channels = indexes.size();
+
+    auto top_idx = 0;
+
+    for (const auto & vec_idx : indexes)
+    {
+        if (vec_idx.size() == 0) continue;
+
+        for (const auto j : vec_idx)
+        {
+            const float* ptr = bottom_blob.channel(j);
+            float* outptr = top_blob.channel(top_idx);
+
+            int k = 0;
+            for (; k<size / 4; k++)
+            {
+                float32x4_t _p = vld1q_f32(outptr);
+                float32x4_t _p1 = vld1q_f32(ptr);
+                _p = vaddq_f32(_p, _p1);
+                vst1q_f32(outptr, _p);
+
+                ptr += 4;
+                outptr += 4;
+            }
+
+            k = 0;
+            for (; k < size % 4; k++)
+            {
+                *outptr += *ptr;
+                ptr += 1;
+                outptr += 1;
+            }
+        }
+
+        top_idx++;
+    }
+
+    return 0;
 }
 
 #if NCNN_VULKAN
@@ -111,7 +160,7 @@ int Layer::upload_model(VkTransfer& /*cmd*/, const Option& /*opt*/)
     return 0;
 }
 
-int Layer::forward(const std::vector<VkMat>& bottom_blobs, std::vector<VkMat>& top_blobs, VkCompute& cmd, const Option& opt) const
+int Layer::forward(const std::vector<VkMat>& bottom_blobs, std::vector<VkMat>& top_blobs, VkCompute& cmd, const Option& opt)
 {
     if (!support_inplace)
         return -1;
@@ -129,7 +178,7 @@ int Layer::forward(const std::vector<VkMat>& bottom_blobs, std::vector<VkMat>& t
     return forward_inplace(top_blobs, cmd, opt);
 }
 
-int Layer::forward(const VkMat& bottom_blob, VkMat& top_blob, VkCompute& cmd, const Option& opt) const
+int Layer::forward(const VkMat& bottom_blob, VkMat& top_blob, VkCompute& cmd, const Option& opt)
 {
     if (!support_inplace)
         return -1;
@@ -143,12 +192,12 @@ int Layer::forward(const VkMat& bottom_blob, VkMat& top_blob, VkCompute& cmd, co
     return forward_inplace(top_blob, cmd, opt);
 }
 
-int Layer::forward_inplace(std::vector<VkMat>& /*bottom_top_blobs*/, VkCompute& /*cmd*/, const Option& /*opt*/) const
+int Layer::forward_inplace(std::vector<VkMat>& /*bottom_top_blobs*/, VkCompute& /*cmd*/, const Option& /*opt*/)
 {
     return -1;
 }
 
-int Layer::forward_inplace(VkMat& /*bottom_top_blob*/, VkCompute& /*cmd*/, const Option& /*opt*/) const
+int Layer::forward_inplace(VkMat& /*bottom_top_blob*/, VkCompute& /*cmd*/, const Option& /*opt*/)
 {
     return -1;
 }

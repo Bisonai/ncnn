@@ -268,7 +268,7 @@ int ConvolutionDepthWise::create_requantize_op(void)
     return 0;
 }
 
-int ConvolutionDepthWise::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int ConvolutionDepthWise::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     // convolv with NxN kernel
     // value = value + bias

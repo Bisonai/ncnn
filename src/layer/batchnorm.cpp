@@ -68,7 +68,7 @@ int BatchNorm::load_model(const ModelBin& mb)
     return 0;
 }
 
-int BatchNorm::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int BatchNorm::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     // a = bias - slope * mean / sqrt(var)
     // b = slope / sqrt(var)

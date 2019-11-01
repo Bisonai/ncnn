@@ -29,7 +29,7 @@ BatchNorm_arm::BatchNorm_arm()
 #endif // __ARM_NEON
 }
 
-int BatchNorm_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int BatchNorm_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     int dims = bottom_top_blob.dims;
     if (dims != 3)

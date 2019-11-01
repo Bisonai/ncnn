@@ -24,7 +24,7 @@ class BatchNorm_arm : virtual public BatchNorm
 public:
     BatchNorm_arm();
 
-    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt) const;
+    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt);
 };
 
 } // namespace ncnn

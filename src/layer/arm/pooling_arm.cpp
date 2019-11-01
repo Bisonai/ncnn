@@ -38,7 +38,7 @@ Pooling_arm::Pooling_arm()
 #endif // __ARM_NEON
 }
 
-int Pooling_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Pooling_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     // max value in NxN window
     // avg value in NxN window

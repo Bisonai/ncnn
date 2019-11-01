@@ -24,6 +24,8 @@
 #cmakedefine01 NCNN_VULKAN
 #cmakedefine01 NCNN_REQUANT
 #cmakedefine01 NCNN_AVX2
+#cmakedefine01 BISONAI_DEBUG
+#cmakedefine01 BISONAI_KILL_THE_BITS
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN

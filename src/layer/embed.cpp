@@ -51,7 +51,7 @@ int Embed::load_model(const ModelBin& mb)
     return 0;
 }
 
-int Embed::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Embed::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     int words = bottom_blob.total();
 

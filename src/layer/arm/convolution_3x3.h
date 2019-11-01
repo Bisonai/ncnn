@@ -14,6 +14,27 @@
 
 static void conv3x3s1_neon(const Mat& bottom_blob, Mat& top_blob, const Mat& _kernel, const Mat& _bias, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("conv3x3s1_neon\n");
+    printf("conv3x3s1_neon bottom_blob w=%d\n", bottom_blob.w);
+    printf("conv3x3s1_neon bottom_blob h=%d\n", bottom_blob.h);
+    printf("conv3x3s1_neon bottom_blob c=%d\n", bottom_blob.c);
+    printf("conv3x3s1_neon bottom_blob elemsize=%d\n", bottom_blob.elemsize);
+    printf("conv3x3s1_neon bottom_blob elempack=%d\n", bottom_blob.elempack);
+
+    printf("conv3x3s1_neon top_blob w=%d\n", top_blob.w);
+    printf("conv3x3s1_neon top_blob h=%d\n", top_blob.h);
+    printf("conv3x3s1_neon top_blob c=%d\n", top_blob.c);
+    printf("conv3x3s1_neon top_blob elemsize=%d\n", top_blob.elemsize);
+    printf("conv3x3s1_neon top_blob elempack=%d\n", top_blob.elempack);
+
+    printf("conv3x3s1_neon _kernel w=%d\n", _kernel.w);
+    printf("conv3x3s1_neon _kernel h=%d\n", _kernel.h);
+    printf("conv3x3s1_neon _kernel c=%d\n", _kernel.c);
+    printf("conv3x3s1_neon _kernel elemsize=%d\n", _kernel.elemsize);
+    printf("conv3x3s1_neon _kernel elempack=%d\n", _kernel.elempack);
+    #endif
+
     int w = bottom_blob.w;
     int inch = bottom_blob.c;
 
@@ -5613,6 +5634,9 @@ static void conv3x3s1_winograd64_neon3(const Mat& bottom_blob, Mat& top_blob, co
 
 static void conv3x3s1_winograd64_neon4(const Mat& bottom_blob, Mat& top_blob, const Mat& kernel_tm, const Mat& _bias, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("conv3x3s1_winograd64_neon4\n");
+    #endif
     int w = bottom_blob.w;
     int h = bottom_blob.h;
     int inch = bottom_blob.c;
@@ -8348,6 +8372,9 @@ static void conv3x3s1_winograd64_neon4(const Mat& bottom_blob, Mat& top_blob, co
 
 static void conv3x3s1_winograd64_neon5(const Mat& bottom_blob, Mat& top_blob, const Mat& kernel_tm, const Mat& _bias, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("conv3x3s1_winograd64_neon5\n");
+    #endif
     int w = bottom_blob.w;
     int h = bottom_blob.h;
     int inch = bottom_blob.c;

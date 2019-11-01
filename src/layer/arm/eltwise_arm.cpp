@@ -29,7 +29,7 @@ Eltwise_arm::Eltwise_arm()
 #endif // __ARM_NEON
 }
 
-int Eltwise_arm::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const
+int Eltwise_arm::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt)
 {
     const Mat& bottom_blob = bottom_blobs[0];
     int w = bottom_blob.w;

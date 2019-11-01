@@ -62,6 +62,10 @@ Convolution_arm::Convolution_arm()
 
 int Convolution_arm::create_pipeline(const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("Convolution::create_pipeline\n");
+    #endif
+
     if (activation_type == 1)
     {
         activation = ncnn::create_layer(ncnn::LayerType::ReLU);
@@ -394,8 +398,21 @@ int Convolution_arm::create_pipeline(const Option& opt)
 
     {
         conv_im2col_sgemm_transform_kernel_neon(weight_data, weight_sgemm_data, num_input, num_output, maxk);
-    }    
+    }
 
+    #if BISONAI_KILL_THE_BITS
+    // Reduce number of channels in `weight_data`
+    const int input_channel_reduced = reduced_input_channels;
+    weight_data_reduced.create(kernel_w*kernel_h*input_channel_reduced*num_output, 1, 1, 4u, opt.blob_allocator);
+
+    // Preallocate bottom_blob
+    bottom_blob_bordered_reduced.create(input_feature_size, input_feature_size, reduced_input_channels, 4u, opt.blob_allocator);
+    bottom_blob_bordered_reduced.fill(0.0f);
+    #endif
+
+    #if BISONAI_DEBUG
+    printf("End of Convolution_arm::create_pipeline\n");
+    #endif
     return 0;
 }
 
@@ -535,8 +552,12 @@ int Convolution_arm::forwardDilation(const Mat& bottom_blob, Mat& top_blob, conv
     return 0;
 }
 
-int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("Convolution_arm::forward\n");
+    #endif
+
     // convolv with NxN kernel
     // value = value + bias
 
@@ -870,10 +891,7 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
 
         if (kernel_w == 3 && kernel_h == 3 && stride_w == 1 && stride_h == 1 && dilation_w == 1 && dilation_h == 1)
         {
-            // TODO more proper condition
             conv3x3s1_winograd64_pack4to1_neon(bottom_blob_bordered, top_blob, weight_data_pack4to1, bias_data, opt);
-
-//             conv3x3s1_pack4to1_neon(bottom_blob_bordered, top_blob, weight_data_pack4to1, bias_data, opt);
 
             if (activation)
             {
@@ -1049,12 +1067,12 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
             0,
             0
         }, // kernel_size = 6
-        {            
-            conv7x7s1_int8_neon,           
+        {
+            conv7x7s1_int8_neon,
             conv7x7s2_int8_neon,
             0,
             0
-        }  // kernel_size = 7                
+        }  // kernel_size = 7
     };
 
     conv_func conv = 0;
@@ -1106,7 +1124,7 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
             quantize->forward(bottom_blob, bottom_blob_int8, opt_g);
         }
 
-        bottom_blob_unbordered = bottom_blob_int8;             
+        bottom_blob_unbordered = bottom_blob_int8;
     }
 
     Mat bottom_blob_bordered = bottom_blob_unbordered;
@@ -1156,19 +1174,19 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
             top_blob_tm.create(outw, outh, num_output, (size_t)4u, opt.workspace_allocator);
             if (top_blob_tm.empty())
                 return -100;
-            
+
             top_blob.create(outw, outh, num_output, (size_t)1u, opt.blob_allocator);
             if (top_blob.empty())
-                return -100; 
+                return -100;
 
             if (use_sgemm1x1)
-            {              
+            {
                 conv1x1s1_sgemm_int8_requant_neon(bottom_blob_bordered, top_blob, weight_1x1s1_sgemm_int8_data, bias_data, requantize_scales, opt);
-                
+
                 if (activation)
                 {
                     activation->forward_inplace(top_blob, opt);
-                }  
+                }
 
                 return 0;
             }
@@ -1183,7 +1201,7 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
             }
             else
             {
-                conv_int8(bottom_blob_bordered, top_blob_tm, weight_sgemm_int8_data, opt);     
+                conv_int8(bottom_blob_bordered, top_blob_tm, weight_sgemm_int8_data, opt);
             }
 
             // requantize, reverse scale inplace
@@ -1197,13 +1215,13 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
                 Mat top_blob_tm_g = top_blob_tm.channel_range(p, 1);
                 Mat top_blob_g = top_blob.channel_range(p, 1);
                 requantize_ops[p]->forward(top_blob_tm_g, top_blob_g, opt_g);
-            }                     
+            }
         }
         else
         {
             top_blob.create(outw, outh, num_output, (size_t)4u, opt.blob_allocator);
             if (top_blob.empty())
-                return -100; 
+                return -100;
 
             if (use_sgemm1x1)
             {
@@ -1218,7 +1236,7 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
                 if (activation)
                 {
                     activation->forward_inplace(top_blob, opt);
-                }  
+                }
 
                 return 0;
             }
@@ -1229,7 +1247,7 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
             else
             {
                 conv_int8(bottom_blob_bordered, top_blob, weight_sgemm_int8_data, opt);
-            }        
+            }
 
             // dequantize, reverse scale inplace
             #pragma omp parallel for num_threads(opt.num_threads)
@@ -1241,13 +1259,13 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
 
                 Mat top_blob_g = top_blob.channel_range(p, 1);
                 dequantize_ops[p]->forward_inplace(top_blob_g, opt_g);
-            }          
+            }
         }
 
         if (activation)
         {
             activation->forward_inplace(top_blob, opt);
-        }           
+        }
 
         return 0;
     }
@@ -1281,7 +1299,7 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
                 return -1;
         }
 
-    } else 
+    } else
     {
         if (use_winograd3x3 && w <= 120 && h <= 120)
         {
@@ -1302,9 +1320,44 @@ int Convolution_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option
                 conv3x3s2_packed_neon(bottom_blob_bordered, top_blob, weight_3x3s2_data, bias_data, opt);
             else
                 conv_im2col_sgemm_neon(bottom_blob_bordered, top_blob, weight_sgemm_data, bias_data, kernel_w, kernel_h, stride_w, stride_h, opt);
-        }     
+        }
         else
+        {
+            #if BISONAI_KILL_THE_BITS
+            for (auto idx = 0; idx < num_output; ++idx)
+            {
+                #if BISONAI_DEBUG
+                printf("Channel-wise reduction idx: %d\n", idx);
+                #endif
+
+                this->sum_channels_vec_indices_arm(bottom_blob_bordered, bottom_blob_bordered_reduced, assignments, opt);
+            }
+
+            #if BISONAI_DEBUG
+            printf("bottom_blob_bordered w=%d\n", bottom_blob_bordered.w);
+            printf("bottom_blob_bordered h=%d\n", bottom_blob_bordered.h);
+            printf("bottom_blob_bordered c=%d\n", bottom_blob_bordered.c);
+            printf("bottom_blob_bordered elemsize=%d\n", bottom_blob_bordered.elemsize);
+            printf("bottom_blob_bordered elempack=%d\n", bottom_blob_bordered.elempack);
+
+            printf("bottom_blob_reduced w=%d\n", bottom_blob_bordered_reduced.w);
+            printf("bottom_blob_reduced h=%d\n", bottom_blob_bordered_reduced.h);
+            printf("bottom_blob_reduced c=%d\n", bottom_blob_bordered_reduced.c);
+            printf("bottom_blob_reduced elemsize=%d\n", bottom_blob_bordered_reduced.elemsize);
+            printf("bottom_blob_reduced elempack=%d\n", bottom_blob_bordered_reduced.elempack);
+
+            printf("kernel w=%d\n", weight_data_reduced.w);
+            printf("kernel h=%d\n", weight_data_reduced.h);
+            printf("kernel c=%d\n", weight_data_reduced.c);
+            printf("kernel elemsize=%d\n", weight_data_reduced.elemsize);
+            printf("kernel elempack=%d\n", weight_data_reduced.elempack);
+            #endif
+
+            conv(bottom_blob_bordered_reduced, top_blob, weight_data_reduced, bias_data, opt);
+            #else
             conv(bottom_blob_bordered, top_blob, weight_data, bias_data, opt);
+            #endif
+        }
     }
 
 

@@ -172,7 +172,7 @@ int InnerProduct::destroy_pipeline(const Option& opt)
     return 0;
 }
 
-int InnerProduct::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int InnerProduct::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     int w = bottom_blob.w;
     int h = bottom_blob.h;
@@ -224,7 +224,7 @@ int InnerProduct::forward(const Mat& bottom_blob, Mat& top_blob, const Option& o
                 }
             }
 
-            out[p] = sum;       
+            out[p] = sum;
         }
 
         #pragma omp parallel for num_threads(opt.num_threads)
@@ -246,7 +246,7 @@ int InnerProduct::forward(const Mat& bottom_blob, Mat& top_blob, const Option& o
             if (activation_type == 1)
             {
                 out_f32[p] = std::max(out_f32[p], 0.f);
-            }                
+            }
         }
 
         return 0;

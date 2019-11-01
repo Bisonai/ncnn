@@ -32,7 +32,7 @@ int ReLU::load_param(const ParamDict& pd)
     return 0;
 }
 
-int ReLU::forward_inplace_int8(Mat& bottom_top_blob, const Option& opt) const
+int ReLU::forward_inplace_int8(Mat& bottom_top_blob, const Option& opt)
 {
     int w = bottom_top_blob.w;
     int h = bottom_top_blob.h;
@@ -72,7 +72,7 @@ int ReLU::forward_inplace_int8(Mat& bottom_top_blob, const Option& opt) const
     return 0;
 }
 
-int ReLU::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int ReLU::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     if (bottom_top_blob.elemsize == 1u)
         return ReLU::forward_inplace_int8(bottom_top_blob, opt);

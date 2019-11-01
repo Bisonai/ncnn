@@ -24,8 +24,8 @@ class ReLU_arm : virtual public ReLU
 public:
     ReLU_arm();
 
-    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt) const;
-    virtual int forward_inplace_int8(Mat& bottom_top_blob, const Option& opt) const;
+    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt);
+    virtual int forward_inplace_int8(Mat& bottom_top_blob, const Option& opt);
 };
 
 } // namespace ncnn

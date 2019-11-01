@@ -24,7 +24,7 @@ class Sigmoid_arm : virtual public Sigmoid
 public:
     Sigmoid_arm();
 
-    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt) const;
+    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt);
 };
 
 } // namespace ncnn

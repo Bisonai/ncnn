@@ -14,6 +14,7 @@
 
 #include "convolution.h"
 #include <algorithm>
+#include <random>
 #include "layer_type.h"
 
 namespace ncnn {
@@ -31,6 +32,9 @@ Convolution::Convolution()
 
 int Convolution::load_param(const ParamDict& pd)
 {
+    #if BISONAI_DEBUG
+    printf("Convolution::load_param\n");
+    #endif
     num_output = pd.get(0, 0);
     kernel_w = pd.get(1, 0);
     kernel_h = pd.get(11, kernel_w);
@@ -49,6 +53,67 @@ int Convolution::load_param(const ParamDict& pd)
     activation_type = pd.get(9, 0);
     activation_params = pd.get(10, Mat());
     impl_type = pd.get(17, 0);
+
+    #if BISONAI_KILL_THE_BITS
+    original_input_channels = pd.get(19, 0);
+    reduced_input_channels = pd.get(20, 0);
+    input_feature_size = pd.get(21, 0);
+
+    #if BISONAI_DEBUG
+    printf("original_input_channels=%d\n", original_input_channels);
+    printf("reduced_input_channels=%d\n", reduced_input_channels);
+    printf("input_feature_size=%d\n", input_feature_size);
+    #endif
+
+    auto rng = std::default_random_engine {};
+
+    std::vector<int> indexes;
+    for (auto i = 0; i < original_input_channels; ++i)
+        indexes.push_back(i);
+
+    const int channel_reduction_factor = floor(original_input_channels / reduced_input_channels);
+    const int reg_channel_reduction = (reduced_input_channels - 1) * channel_reduction_factor;
+    const int last_channel_reduction_factor = (original_input_channels - reg_channel_reduction);
+
+    #if BISONAI_DEBUG
+    printf("channel_reduction_factor %d\n", channel_reduction_factor);
+    printf("reg_channel_reduction %d\n", reg_channel_reduction);
+    printf("last_channel_reduction_factor %d\n", last_channel_reduction_factor);
+    printf("sum %d\n", reg_channel_reduction+last_channel_reduction_factor);
+    #endif
+
+    for (auto i = 0; i < reduced_input_channels-1; ++i)
+    {
+        std::vector<int> channel_combinations;
+        std::shuffle(std::begin(indexes), std::end(indexes), rng);
+
+        for (auto j = 0; j < channel_reduction_factor; ++j)
+        {
+            channel_combinations.push_back(indexes.at(j));
+        }
+
+        assignments.push_back(channel_combinations);
+    }
+
+    std::vector<int> channel_combinations;
+    for (auto i = 0; i < last_channel_reduction_factor; ++i)
+    {
+        channel_combinations.push_back(indexes.at(i));
+    }
+    assignments.push_back(channel_combinations);
+
+    #if BISONAI_DEBUG
+    printf("assignments size %d\n", assignments.size());
+    #endif
+
+    int assignments_sum = 0;
+    for (const auto a : assignments)
+        assignments_sum += a.size();
+    #if BISONAI_DEBUG
+    printf("assignments_sum %d\n", assignments_sum);
+    #endif # BISONAI_DBUG
+
+    #endif # BISONAI_KILL_THE_BITS
 
     return 0;
 }
@@ -244,8 +309,11 @@ int Convolution::create_requantize_op(void)
     return 0;
 }
 
-int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
+    #if BISONAI_DEBUG
+    printf("Convolution::forward\n");
+    #endif
     // convolv with NxN kernel
     // value = value + bias
 
@@ -390,10 +458,10 @@ int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& op
             top_blob_tm.create(outw, outh, num_output, (size_t)4u, opt.workspace_allocator);
             if (top_blob_tm.empty())
                 return -100;
-            
+
             top_blob.create(outw, outh, num_output, (size_t)1u, opt.blob_allocator);
             if (top_blob.empty())
-                return -100; 
+                return -100;
 
             // num_output
             #pragma omp parallel for num_threads(opt.num_threads)
@@ -440,7 +508,7 @@ int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& op
                     Mat top_blob_tm_g = top_blob_tm.channel_range(p, 1);
                     Mat top_blob_g = top_blob.channel_range(p, 1);
                     requantize_ops[p]->forward(top_blob_tm_g, top_blob_g, opt_g);
-                }       
+                }
 
                 // activation relu
                 if (activation_type == 1)
@@ -452,7 +520,7 @@ int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& op
                         if (outptr_s8[i] < 0)
                             outptr_s8[i] = 0;
                     }
-                }                                 
+                }
             }
         }
         else
@@ -460,7 +528,7 @@ int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& op
             top_blob.create(outw, outh, num_output, (size_t)4u, opt.blob_allocator);
             if (top_blob.empty())
                 return -100;
-      
+
             // num_output
             #pragma omp parallel for num_threads(opt.num_threads)
             for (int p=0; p<num_output; p++)
@@ -517,8 +585,8 @@ int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& op
                         outptr_fp32[i] = std::max(outptr_fp32[i], 0.f);
                     }
                 }
-            }   
-        }        
+            }
+        }
 
         return 0;
     }

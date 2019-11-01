@@ -441,7 +441,7 @@ static void padding_replicate_pack4_neon(const Mat& src, Mat& dst, int top, int 
 }
 #endif // __ARM_NEON
 
-int Padding_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Padding_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     if (top == 0 && bottom == 0 && left == 0 && right == 0)
     {

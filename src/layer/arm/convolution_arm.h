@@ -29,7 +29,7 @@ public:
     virtual int create_pipeline(const Option& opt);
     virtual int destroy_pipeline(const Option& opt);
 
-    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const;
+    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt);
     virtual int forwardDilation(const Mat& bottom_blob, Mat& top_blob, conv_func conv, const Option& opt) const;
 
 public:
@@ -55,6 +55,11 @@ public:
 
     Mat weight_3x3_winograd64_data_pack4;
     Mat weight_1x1_sgemm_data_pack4;
+
+    #if BISONAI_KILL_THE_BITS
+    Mat weight_data_reduced;
+    Mat bottom_blob_bordered_reduced;
+    #endif
 };
 
 } // namespace ncnn

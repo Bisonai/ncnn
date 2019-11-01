@@ -24,7 +24,7 @@ Flatten::Flatten()
     support_inplace = false;
 }
 
-int Flatten::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Flatten::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     int w = bottom_blob.w;
     int h = bottom_blob.h;

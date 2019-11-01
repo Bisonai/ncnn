@@ -29,7 +29,7 @@ ReLU_arm::ReLU_arm()
 #endif // __ARM_NEON
 }
 
-int ReLU_arm::forward_inplace_int8(Mat& bottom_top_blob, const Option& opt) const
+int ReLU_arm::forward_inplace_int8(Mat& bottom_top_blob, const Option& opt)
 {
     int w = bottom_top_blob.w;
     int h = bottom_top_blob.h;
@@ -110,7 +110,7 @@ int ReLU_arm::forward_inplace_int8(Mat& bottom_top_blob, const Option& opt) cons
     return 0;
 }
 
-int ReLU_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int ReLU_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     if (bottom_top_blob.elemsize == 1u)
         return ReLU_arm::forward_inplace_int8(bottom_top_blob, opt);

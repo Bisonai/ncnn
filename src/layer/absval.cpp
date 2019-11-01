@@ -24,7 +24,7 @@ AbsVal::AbsVal()
     support_inplace = true;
 }
 
-int AbsVal::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int AbsVal::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     int w = bottom_top_blob.w;
     int h = bottom_top_blob.h;

@@ -79,7 +79,7 @@ int InnerProduct_arm::destroy_pipeline(const Option& opt)
     return 0;
 }
 
-int InnerProduct_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int InnerProduct_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     if (use_int8_inference)
     {

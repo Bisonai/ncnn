@@ -32,7 +32,7 @@ Softmax_arm::Softmax_arm()
 #endif // __ARM_NEON
 }
 
-int Softmax_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int Softmax_arm::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     int dims = bottom_top_blob.dims;
     size_t elemsize = bottom_top_blob.elemsize;

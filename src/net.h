@@ -121,7 +121,7 @@ public:
     void clear();
 
     // construct an Extractor from network
-    Extractor create_extractor() const;
+    Extractor create_extractor();
 
 protected:
     // parse the structure of network
@@ -146,10 +146,10 @@ protected:
     Layer* create_custom_layer(const char* type);
 #endif // NCNN_STRING
     Layer* create_custom_layer(int index);
-    int forward_layer(int layer_index, std::vector<Mat>& blob_mats, Option& opt) const;
+    int forward_layer(int layer_index, std::vector<Mat>& blob_mats, Option& opt);
 
 #if NCNN_VULKAN
-    int forward_layer(int layer_index, std::vector<Mat>& blob_mats, std::vector<VkMat>& blob_mats_gpu, VkCompute& cmd, Option& opt) const;
+    int forward_layer(int layer_index, std::vector<Mat>& blob_mats, std::vector<VkMat>& blob_mats_gpu, VkCompute& cmd, Option& opt);
 #endif // NCNN_VULKAN
 
 protected:
@@ -239,11 +239,11 @@ public:
 #endif // NCNN_VULKAN
 
 protected:
-    friend Extractor Net::create_extractor() const;
-    Extractor(const Net* net, int blob_count);
+    friend Extractor Net::create_extractor();
+    Extractor(Net* net, int blob_count);
 
 private:
-    const Net* net;
+    Net* net;
     std::vector<Mat> blob_mats;
     Option opt;
 

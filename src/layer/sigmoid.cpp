@@ -25,7 +25,7 @@ Sigmoid::Sigmoid()
     support_inplace = true;
 }
 
-int Sigmoid::forward_inplace(Mat& bottom_top_blob, const Option& opt) const
+int Sigmoid::forward_inplace(Mat& bottom_top_blob, const Option& opt)
 {
     int w = bottom_top_blob.w;
     int h = bottom_top_blob.h;

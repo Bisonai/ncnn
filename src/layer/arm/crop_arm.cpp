@@ -55,7 +55,7 @@ static void crop_pack4_neon(const Mat& src, Mat& dst, int top, int left)
 }
 #endif // __ARM_NEON
 
-int Crop_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Crop_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     int w = bottom_blob.w;
     int h = bottom_blob.h;
@@ -349,7 +349,7 @@ int Crop_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) 
     return Crop::forward(bottom_blob, top_blob, opt);
 }
 
-int Crop_arm::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const
+int Crop_arm::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt)
 {
     const Mat& bottom_blob = bottom_blobs[0];
     const Mat& reference_blob = bottom_blobs[1];

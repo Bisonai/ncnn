@@ -73,13 +73,15 @@ public:
 public:
     // implement inference
     // return 0 if success
-    virtual int forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt = Option()) const;
-    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt = Option()) const;
+    virtual int forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt = Option());
+    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt = Option());
 
     // implement inplace inference
     // return 0 if success
-    virtual int forward_inplace(std::vector<Mat>& bottom_top_blobs, const Option& opt = Option()) const;
-    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt = Option()) const;
+    virtual int forward_inplace(std::vector<Mat>& bottom_top_blobs, const Option& opt = Option());
+    virtual int forward_inplace(Mat& bottom_top_blob, const Option& opt = Option());
+
+    int sum_channels_vec_indices_arm(const Mat& bottom_blob, Mat& top_blob, const std::vector<std::vector<int>>& indexes, const Option& opt);
 
 #if NCNN_VULKAN
 public:
@@ -89,13 +91,13 @@ public:
 public:
     // implement inference
     // return 0 if success
-    virtual int forward(const std::vector<VkMat>& bottom_blobs, std::vector<VkMat>& top_blobs, VkCompute& cmd, const Option& opt = Option()) const;
-    virtual int forward(const VkMat& bottom_blob, VkMat& top_blob, VkCompute& cmd, const Option& opt = Option()) const;
+    virtual int forward(const std::vector<VkMat>& bottom_blobs, std::vector<VkMat>& top_blobs, VkCompute& cmd, const Option& opt = Option());
+    virtual int forward(const VkMat& bottom_blob, VkMat& top_blob, VkCompute& cmd, const Option& opt = Option());
 
     // implement inplace inference
     // return 0 if success
-    virtual int forward_inplace(std::vector<VkMat>& bottom_top_blobs, VkCompute& cmd, const Option& opt = Option()) const;
-    virtual int forward_inplace(VkMat& bottom_top_blob, VkCompute& cmd, const Option& opt = Option()) const;
+    virtual int forward_inplace(std::vector<VkMat>& bottom_top_blobs, VkCompute& cmd, const Option& opt = Option());
+    virtual int forward_inplace(VkMat& bottom_top_blob, VkCompute& cmd, const Option& opt = Option());
 
 public:
     // assigned immediately after creating this layer

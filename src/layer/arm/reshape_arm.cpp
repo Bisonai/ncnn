@@ -63,7 +63,7 @@ int Reshape_arm::destroy_pipeline(const Option& opt)
     return 0;
 }
 
-int Reshape_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Reshape_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
 #if __ARM_NEON
     if (opt.use_packing_layout)

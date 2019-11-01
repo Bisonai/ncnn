@@ -787,7 +787,7 @@ struct reduction_op_min : std::binary_function<T,T,T> {
 };
 
 
-int Reduction::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Reduction::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     int dims = bottom_blob.dims;
     int axes_flag[3] = {0};

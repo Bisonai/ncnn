@@ -275,7 +275,7 @@ static void copy_make_border_image(const Mat& src, Mat& dst, int top, int left, 
 
 }
 
-int Padding::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
+int Padding::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt)
 {
     if (top == 0 && bottom == 0 && left == 0 && right == 0)
     {
@@ -345,7 +345,7 @@ int Padding::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) c
     return 0;
 }
 
-int Padding::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const
+int Padding::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt)
 {
     const Mat& bottom_blob = bottom_blobs[0];
     const Mat& reference_blob = bottom_blobs[1];
