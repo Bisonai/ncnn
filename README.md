@@ -1,4 +1,4 @@
-This repository is accompanying a blog post [Kill the bits and gain the speed?](https://bisonai.com/2019/11/28/kill-the-bits/).
+This repository is accompanying a blog post [Kill the bits and gain the speed?](https://martinkersner.com/2019/11/28/kill-the-bits/).
 
 In the root directory, you can find two compilation scripts `build_kill_the_bits_aarch64.sh` and `build_kill_the_bits_armv7.sh` for `arm64` and `armv7`, respectively.
 Experimental layer definitions are defined in `experiments/conv3x3` directory.
